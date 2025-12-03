@@ -14,7 +14,8 @@ deej consists of a [lightweight desktop client](#features) written in Go, and an
 
 **[Download the latest release](https://github.com/omriharel/deej/releases/latest) | [Video demonstration](https://youtu.be/VoByJ4USMr8) | [Build video by Tech Always](https://youtu.be/x2yXbFiiAeI)**
 
-![deej](assets/build-3d-annotated.png)
+<img width="1133" height="658" alt="image" src="https://github.com/user-attachments/assets/7bdbb748-7808-4be8-85c5-94f46c1e4c20" />
+
 
 > _**Psst!** [No 3D printer? No problem!](./assets/build-shoebox.jpg)_ You can build deej on some cardboard, a shoebox or even a breadboard :)
 
