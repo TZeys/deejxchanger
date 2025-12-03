@@ -62,11 +62,15 @@ deej is written in Go and [distributed](https://github.com/omriharel/deej/releas
 ### Hardware
 
 - The sliders are connected to 5 (or as many as you like) analog pins on an Arduino Nano/Uno board. They're powered from the board's 5V output (see schematic)
+- The middle pin of the two way switch is connected to 3.3V, the left and right ones are connected to Digital Pin 2 and 3 respectively (see second schematic)
 - The board connects via a USB cable to the PC
 
 #### Schematic
 
 ![Hardware schematic](assets/schematic.png)
+
+<img width="482" height="451" alt="image" src="https://github.com/user-attachments/assets/7c05d57f-1c71-41e2-93da-0703767c968b" />
+
 
 ### Software
 
@@ -160,6 +164,7 @@ In case you prefer watching to reading, Charles from the [**Tech Always**](https
 - A few slider potentiometers, up to your number of free analog pins (the cheaper ones cost around 1-2 USD each, and come with a standard 10K Ohm variable resistor. These _should_ work just fine for this project)
   - **Important:** make sure to get **linear** sliders, not logarithmic ones! Check the product description
   - You can also use circular knobs if you like
+- A 3-Way Switch
 - Some wires
 - Any kind of box to hold everything together. **You don't need a 3D printer for this project!** It works fantastically with just a piece of cardboard or a shoebox. That being said, if you do have one, read on...
 
