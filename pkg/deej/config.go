@@ -27,6 +27,9 @@ type CanonicalConfig struct {
 
 	NoiseReductionLevel string
 
+	OutputOneDevice string
+	OutputTwoDevice string
+
 	logger             *zap.SugaredLogger
 	notifier           Notifier
 	stopWatcherChannel chan bool
@@ -238,6 +241,9 @@ func (cc *CanonicalConfig) populateFromVipers() error {
 
 	cc.InvertSliders = cc.userConfig.GetBool(configKeyInvertSliders)
 	cc.NoiseReductionLevel = cc.userConfig.GetString(configKeyNoiseReductionLevel)
+
+	cc.OutputOneDevice = cc.userConfig.GetString("output_one_device")
+	cc.OutputTwoDevice = cc.userConfig.GetString("output_two_device")
 
 	cc.logger.Debug("Populated config fields from vipers")
 

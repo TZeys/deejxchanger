@@ -6,15 +6,70 @@ import (
 	"fmt"
 	"io"
 	"regexp"
+	"runtime"
 	"strconv"
 	"strings"
+	"syscall"
 	"time"
+	"unsafe"
 
+	"github.com/gen2brain/beeep"
+	"github.com/go-ole/go-ole"
 	"github.com/jacobsa/go-serial/serial"
+	"github.com/moutend/go-wca"
 	"go.uber.org/zap"
 
 	"github.com/omriharel/deej/pkg/deej/util"
 )
+
+var (
+	clsidPolicyConfigClient = ole.NewGUID("{870AF99C-171D-4F9E-AF0D-E63DF40C2BC9}")
+	iidIPolicyConfig        = ole.NewGUID("{F8679F50-850A-41CF-9C72-430F290290C8}")
+)
+
+// IPolicyConfig is a custom interface definition for the undocumented IPolicyConfig.
+type IPolicyConfig struct {
+	ole.IUnknown
+}
+
+// IPolicyConfigVtbl is the virtual method table for IPolicyConfig.
+type IPolicyConfigVtbl struct {
+	ole.IUnknownVtbl
+	GetMixFormat          uintptr
+	GetDeviceFormat       uintptr
+	ResetDeviceFormat     uintptr
+	SetDeviceFormat       uintptr
+	GetProcessingPeriod   uintptr
+	SetProcessingPeriod   uintptr
+	GetShareMode          uintptr
+	SetShareMode          uintptr
+	GetPropertyValue      uintptr
+	SetPropertyValue      uintptr
+	SetDefaultEndpoint    uintptr
+	SetEndpointVisibility uintptr
+}
+
+func (v *IPolicyConfig) VTable() *IPolicyConfigVtbl {
+	return (*IPolicyConfigVtbl)(unsafe.Pointer(v.RawVTable))
+}
+
+// SetDefaultEndpoint sets the default audio endpoint.
+func (v *IPolicyConfig) SetDefaultEndpoint(deviceID string, role uint32) (err error) {
+	pDeviceID, err := syscall.UTF16PtrFromString(deviceID)
+	if err != nil {
+		return
+	}
+	hr, _, _ := syscall.Syscall(
+		v.VTable().SetDefaultEndpoint,
+		3,
+		uintptr(unsafe.Pointer(v)),
+		uintptr(unsafe.Pointer(pDeviceID)),
+		uintptr(role))
+	if hr != 0 {
+		err = ole.NewError(hr)
+	}
+	return
+}
 
 // SerialIO provides a deej-aware abstraction layer to managing serial I/O
 type SerialIO struct {
@@ -111,6 +166,15 @@ func (sio *SerialIO) Start() error {
 
 	// read lines or await a stop
 	go func() {
+		runtime.LockOSThread()
+		defer runtime.UnlockOSThread()
+
+		if err := ole.CoInitialize(0); err != nil {
+			namedLogger.Warnw("Failed to initialize COM for serial listener goroutine", "error", err)
+		} else {
+			defer ole.CoUninitialize()
+		}
+
 		connReader := bufio.NewReader(sio.conn)
 		lineChannel := sio.readLine(namedLogger, connReader)
 
@@ -226,12 +290,136 @@ func (sio *SerialIO) readLine(logger *zap.SugaredLogger, reader *bufio.Reader) c
 	return ch
 }
 
+// switchAudioDevice sets the default audio output device to the specified device name.
+func switchAudioDevice(logger *zap.SugaredLogger, deviceName string) error {
+
+	// Create MMDeviceEnumerator
+	var mmde *wca.IMMDeviceEnumerator
+	if err := wca.CoCreateInstance(
+		wca.CLSID_MMDeviceEnumerator,
+		0,
+		wca.CLSCTX_ALL,
+		wca.IID_IMMDeviceEnumerator,
+		&mmde,
+	); err != nil {
+		return fmt.Errorf("failed to create MMDeviceEnumerator: %w", err)
+	}
+	defer mmde.Release()
+
+	// Enumerate audio endpoints
+	var mmdeCollection *wca.IMMDeviceCollection
+	if err := mmde.EnumAudioEndpoints(wca.ERender, wca.DEVICE_STATE_ACTIVE, &mmdeCollection); err != nil {
+		return fmt.Errorf("failed to enumerate audio endpoints: %w", err)
+	}
+	defer mmdeCollection.Release()
+
+	var count uint32
+	if err := mmdeCollection.GetCount(&count); err != nil {
+		return fmt.Errorf("failed to get device count: %w", err)
+	}
+
+	// Find the device by name
+	var deviceID string
+	for i := uint32(0); i < count; i++ {
+		var device *wca.IMMDevice
+		if err := mmdeCollection.Item(i, &device); err != nil {
+			continue
+		}
+
+		var propertyStore *wca.IPropertyStore
+		if err := device.OpenPropertyStore(wca.STGM_READ, &propertyStore); err != nil {
+			device.Release()
+			continue
+		}
+
+		var prop wca.PROPVARIANT
+		if err := propertyStore.GetValue(&wca.PKEY_Device_FriendlyName, &prop); err != nil {
+			propertyStore.Release()
+			device.Release()
+			continue
+		}
+
+		friendlyName := prop.String()
+		prop.Clear()
+		propertyStore.Release()
+
+		if friendlyName == deviceName {
+			var id string
+			if err := device.GetId(&id); err == nil {
+				deviceID = id
+			}
+			device.Release()
+			break
+		}
+
+		device.Release()
+	}
+
+	if deviceID == "" {
+		errMsg := fmt.Sprintf("Audio device '%s' not found", deviceName)
+		beeep.Notify("Deej Audio Error", errMsg, "")
+		return fmt.Errorf(errMsg)
+	}
+
+	// Set the default audio device using IPolicyConfig.
+	var policyConfigUnknown *ole.IUnknown
+	err := wca.CoCreateInstance(clsidPolicyConfigClient, 0, ole.CLSCTX_INPROC_SERVER, iidIPolicyConfig, &policyConfigUnknown)
+	if err != nil {
+		return fmt.Errorf("failed to create PolicyConfigClient object: %w", err)
+	}
+	defer policyConfigUnknown.Release()
+
+	policyConfig := (*IPolicyConfig)(unsafe.Pointer(policyConfigUnknown))
+
+	// The role for "Console" is 0.
+	err = policyConfig.SetDefaultEndpoint(deviceID, 0)
+	if err != nil {
+		return fmt.Errorf("failed to set default audio endpoint: %w", err)
+	}
+
+	return nil
+}
+
 func (sio *SerialIO) handleLine(logger *zap.SugaredLogger, line string) {
 
 	// this function receives an unsanitized line which is guaranteed to end with LF,
-	// but most lines will end with CRLF. it may also have garbage instead of
-	// deej-formatted values, so we must check for that! just ignore bad ones
+	// but most lines will end with CRLF. it may also have garbage.
+
+	// trim whitespace and the newline characters
+	trimmedLine := strings.TrimSpace(line)
+
+	// First, check for specific commands to switch audio devices
+	if trimmedLine == "WORKS 1" {
+		if sio.deej.config.OutputOneDevice == "" {
+			logger.Warnw("output_one_device is not set in config.yaml, cannot switch audio device")
+			return
+		}
+		if err := switchAudioDevice(logger, sio.deej.config.OutputOneDevice); err != nil {
+			logger.Warnw("Failed to switch audio device", "device", sio.deej.config.OutputOneDevice, "error", err)
+		} else {
+			logger.Infow("Switched audio device", "device", sio.deej.config.OutputOneDevice)
+		}
+		return
+	}
+
+	if trimmedLine == "WORKS 2" {
+		if sio.deej.config.OutputTwoDevice == "" {
+			logger.Warnw("output_two_device is not set in config.yaml, cannot switch audio device")
+			return
+		}
+		if err := switchAudioDevice(logger, sio.deej.config.OutputTwoDevice); err != nil {
+			logger.Warnw("Failed to switch audio device", "device", sio.deej.config.OutputTwoDevice, "error", err)
+		} else {
+			logger.Infow("Switched audio device", "device", sio.deej.config.OutputTwoDevice)
+		}
+		return
+	}
+
+	// if it's not a command, check if it's a valid slider data line
 	if !expectedLinePattern.MatchString(line) {
+		if sio.deej.Verbose() {
+			logger.Debugw("Line doesn't match expected pattern, ignoring", "line", line)
+		}
 		return
 	}
 
