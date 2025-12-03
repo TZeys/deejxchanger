@@ -83,14 +83,20 @@ The config file determines which applications (and devices) are mapped to which 
 It looks like this:
 
 ```yaml
+# process names are case-insensitive
+# you can use 'master' to indicate the master channel, or a list of process names to create a group
+# you can use 'mic' to control your mic input level (uses the default recording device)
+# you can use 'deej.unmapped' to control all apps that aren't bound to any slider (this ignores master, system, mic and device-targeting sessions) (experimental)
+# windows only - you can use 'deej.current' to control the currently active app (whether full-screen or not) (experimental)
+# windows only - you can use a device's full name, i.e. "Speakers (Realtek High Definition Audio)", to bind it. this works for both output and input devices
+# windows only - you can use 'system' to control the "system sounds" volume
+# important: slider indexes start at 0, regardless of which analog pins you're using!
 slider_mapping:
-  0: master
-  1: chrome.exe
+  0: discord.exe
+  1: deej.unmapped
   2: spotify.exe
-  3:
-    - pathofexile_x64.exe
-    - rocketleague.exe
-  4: discord.exe
+  3: brave.exe
+  4: master
 
 # set this to true if you want the controls inverted (i.e. top is 0%, bottom is 100%)
 invert_sliders: false
@@ -98,6 +104,17 @@ invert_sliders: false
 # settings for connecting to the arduino board
 com_port: COM4
 baud_rate: 9600
+
+# audio output device names for switching via serial commands
+# "WORKS 1" will switch to output_one_device
+# "WORKS 2" will switch to output_two_device
+# important: make sure that the names below are correctly spelled as well as in the correct format! You will get an error message if these names are incorrect. 
+# To find the exact name, please go to: Right Click Sound in your taskbar -> Windows Legacy -> Playback Devices
+# You will see your playback devices with their names, and their driver device (Below the name i.e NVIDIA High Definition Audio or Realtek(R) Audio)
+# format "NAME(DRIVER-NAME)"
+
+output_one_device: "Headphones (3- AIR 192 4)"
+output_two_device: "Speakers (NVIDIA High Definition Audio)"
 
 # adjust the amount of signal noise reduction depending on your hardware quality
 # supported values are "low" (excellent hardware), "default" (regular hardware) or "high" (bad, noisy hardware)
