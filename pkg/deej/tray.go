@@ -21,7 +21,7 @@ func (d *Deej) initializeTray(onDone func()) {
 		editConfig.SetIcon(icon.EditConfig)
 
 		refreshSessions := systray.AddMenuItem("Re-scan audio sessions", "Manually refresh audio sessions if something's stuck")
-		refreshSessions.SetIcon(icon.RefreshSessions)
+		// refreshSessions.SetIcon(icon.RefreshSessions)
 
 		if d.version != "" {
 			systray.AddSeparator()
