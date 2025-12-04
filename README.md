@@ -203,14 +203,14 @@ With many different 3D-printed designs being added to our [community showcase](.
 - Windows. That's it
 
 #### Linux
+- Linux is NOT supported by this modified version of Deej as it uses Windows-specific libraries for audio switching. For the normal, linux-compatible version, please check out the [original deej version](https://github.com/omriharel/deej) (Not supporting audio switching)
 
-- Install `libgtk-3-dev`, `libappindicator3-dev` and `libwebkit2gtk-4.0-dev` for system tray support. Pre-built Linux binaries aren't currently released, so you'll need to [build from source](#building-from-source). If there's demand for pre-built binaries, please [let me know](https://discord.gg/nf88NJu)!
 
 ### Download and installation
 
-- Head over to the [releases page](https://github.com/omriharel/deej/releases) and download the [latest version](https://github.com/omriharel/deej/releases/latest)'s executable and configuration file (`deej.exe` and `config.yaml`)
+- Head over to the [releases page](https://github.com/omriharel/deej/releases) and download the [latest version](https://github.com/omriharel/deej/releases/latest)'s executable and configuration file (`deejxchanger.exe` and `config.yaml`)
 - Place them in the same directory anywhere on your machine
-- (Optional, on Windows) Create a shortcut to `deej.exe` and copy it to `%APPDATA%\Microsoft\Windows\Start Menu\Programs\Startup` to have deej run on boot
+- (Optional, on Windows) Create a shortcut to `deejxchanger.exe` and copy it to `%APPDATA%\Microsoft\Windows\Start Menu\Programs\Startup` to have deej run on boot
 
 ### Building from source
 
