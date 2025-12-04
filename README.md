@@ -9,7 +9,7 @@ deejxchanger is an **open-source hardware volume mixer and output switcher** for
 
 > **_New:_** [work-in-progress deej FAQ](./docs/faq/faq.md)!
 
-deej consists of a [lightweight desktop client](#features) written in Go, and an Arduino-based hardware setup that's simple and cheap to build. [**Check out some versions built by members of our community!**](./community.md)
+deejxchanger consists of a [lightweight desktop client](#features) written in Go, and an Arduino-based hardware setup that's simple and cheap to build. [**Check out some versions built by members of our community!**](./community.md)
 
 **[Download the latest release](https://github.com/TZeys/deejxchanger/releases/tag/V0.01) | [Video demonstration](https://youtu.be/VoByJ4USMr8) | [Build video by Tech Always](https://youtu.be/x2yXbFiiAeI)**
 
@@ -41,7 +41,7 @@ deej consists of a [lightweight desktop client](#features) written in Go, and an
 
 ## Features
 
-deej is written in Go and [distributed](https://github.com/omriharel/deej/releases/latest) as a portable (no installer needed) executable.
+deejxchanger is written in Go and [distributed](https://github.com/omriharel/deej/releases/latest) as a portable (no installer needed) executable.
 
 - Bind apps to different sliders
   - Bind multiple apps per slider (i.e. one slider for all your games)
@@ -74,7 +74,7 @@ deej is written in Go and [distributed](https://github.com/omriharel/deej/releas
 
 ### Software
 
-- The code running on the Arduino board is a [C program](./arduino/deej-5-sliders-vanilla/deej-5-sliders-vanilla.ino) constantly writing current slider values over its serial interface
+- The code running on the Arduino board is a [C program](https://github.com/TZeys/deejxchanger/releases/tag/V0.01) constantly writing current slider values over its serial interface
 - The PC runs a lightweight [Go client](./pkg/deej/cmd/main.go) in the background. This client reads the serial stream and adjusts app volumes according to the given configuration file
 
 ## Slider mapping (configuration)
