@@ -41,7 +41,7 @@ deejxchanger consists of a [lightweight desktop client](#features) written in Go
 
 ## Features
 
-deejxchanger is written in Go and [distributed](https://github.com/omriharel/deej/releases/latest) as a portable (no installer needed) executable.
+deejxchanger is written in Go and [distributed](https://github.com/TZeys/deejxchanger/releases/tag/V0.01) as a portable (no installer needed) executable.
 
 - Bind apps to different sliders
   - Bind multiple apps per slider (i.e. one slider for all your games)
