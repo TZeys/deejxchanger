@@ -117,7 +117,7 @@ baud_rate: 9600
 # important: make sure that the names below are correctly spelled as well as in the correct format! You will get an error message if these names are incorrect. 
 # To find the exact name, please go to: Right Click Sound in your taskbar -> Windows Legacy -> Playback Devices
 # You will see your playback devices with their names, and their driver device (Below the name i.e NVIDIA High Definition Audio or Realtek(R) Audio)
-# format "NAME(DRIVER-NAME)"
+# format "NAME (DRIVER-NAME)"
 
 output_one_device: "Headphones (3- AIR 192 4)"
 output_two_device: "Speakers (NVIDIA High Definition Audio)"
