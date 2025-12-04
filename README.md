@@ -138,8 +138,8 @@ noise_reduction: default
 - You can create groups of process names (using a list) to either:
     - control more than one app with a single slider
     - choose whichever process in the group that's currently running (i.e. to have one slider control any game you're playing)
-- For audio output switching change the names of output_one_device and output_two_device respectively. the naming and format is very specific. please refer to the config.yaml explanation as well as the example below.
-    - FORMAT: "NAME (DRIVER_NAME)"
+- For audio output switching change the names of `output_one_device` and `output_two_device` respectively. the naming and format is very specific. please refer to the config.yaml explanation as well as the example below.
+    - FORMAT: "NAME (DRIVER_NAME)" (with a space between NAME and (DRIVER_NAME)!)
   
 <img width="751" height="67" alt="image" src="https://github.com/user-attachments/assets/24085e1e-1827-4ad9-a855-39f0bfeb9532" />
 
