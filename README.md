@@ -1,4 +1,4 @@
-# deej
+# deejxchanger
 
 deejxchanger is an **open-source hardware volume mixer and output switcher** for Windows. It is based on [deej](https://github.com/omriharel/deej) and lets you use real-life sliders (like a DJ!) to **seamlessly control the volumes of different apps** 
 (such as your music player, the game you're playing and your voice chat session) without having to stop what you're doing.
