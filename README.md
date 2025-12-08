@@ -62,14 +62,15 @@ deejxchanger is written in Go and [distributed](https://github.com/TZeys/deejxch
 ### Hardware
 
 - The sliders are connected to 5 (or as many as you like) analog pins on an Arduino Nano/Uno board. They're powered from the board's 5V output (see schematic)
-- The middle pin of the two way switch is connected to 3.3V, the left and right ones are connected to Digital Pin 2 and 3 respectively (see second schematic)
+- The middle pin of the two way switch is connected to GND, the left and right ones are connected to Digital Pin 2 and 3 respectively (see second schematic)
 - The board connects via a USB cable to the PC
 
 #### Schematic
 
 ![Hardware schematic](assets/schematic.png)
 
-<img width="482" height="451" alt="image" src="https://github.com/user-attachments/assets/7c05d57f-1c71-41e2-93da-0703767c968b" />
+<img width="699" height="639" alt="image" src="https://github.com/user-attachments/assets/f85efef9-2e24-4cd5-9384-5cca5352501e" />
+
 
 
 ### Software
