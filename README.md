@@ -6,7 +6,7 @@ deejxchanger is an **open-source hardware volume mixer and output switcher** for
 
 deejxchanger consists of a [lightweight desktop client](#features) written in Go, and an Arduino-based hardware setup that's simple and cheap to build. [**Check out some versions built by members of our community!**](./community.md)
 
-**[Download the latest release](https://github.com/TZeys/deejxchanger/releases/tag/V0.01) | [Video demonstration](https://youtu.be/VoByJ4USMr8) | [Build video by Tech Always](https://youtu.be/x2yXbFiiAeI)**
+**[Download the latest release](https://github.com/TZeys/deejxchanger/releases/tag/V0.01) | [Deej based Build-Tutorial](https://youtu.be/x2yXbFiiAeI)**
 
 <img width="1133" height="658" alt="image" src="https://github.com/user-attachments/assets/7bdbb748-7808-4be8-85c5-94f46c1e4c20" />
 
